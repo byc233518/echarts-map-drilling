@@ -1,0 +1,169 @@
+<!-- 
+/*
+ * @Author: baiyuchuan 
+ * @Date: 2021-10-03 19:07:04 
+ */
+ -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>地图下钻Demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@4.9.0/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+</head>
+
+<style>
+    .title {
+        width: 100%;
+        text-align: center;
+        font-size: 24px;
+    }
+
+    .subtitle {
+        font-weight: bold;
+        width: 100%;
+        margin-top: 15px;
+        text-align: center;
+        font-size: 18px;
+    }
+
+    .contact {
+        cursor: pointer;
+        color: #5297cf;
+        margin-left: 10px;
+    }
+
+    #main {
+        height: 800px;
+        width: 1000px;
+        margin: 10px auto;
+    }
+
+    .btn-group {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn {
+        width: 120px;
+        text-align: center;
+        padding: 10px 0;
+        border-radius: 5px;
+        background: #5297cf;
+        color: #fff;
+        cursor: pointer;
+        margin: 0 15px;
+    }
+</style>
+
+<body>
+    <div class="title">地图下钻Demo</div>
+    <div id="main"></div>
+    <div class="btn-group">
+        <div class="btn" onClick="loadMap('广东省')">广东省</div>
+        <div class="btn" onClick="loadMap('佛山市')">佛山市</div>
+        <div class="btn" onClick="loadMap('顺德区')">顺德区</div>
+        <div class="btn" onClick="loadMap('伦教街道')">伦教街道</div>
+    </div>
+</body>
+<script type="text/javascript">
+
+    loadMap('顺德区')
+
+    function loadMap(name) {
+        $.get('./json/' + name + '.json', function (Json) {
+            echarts.registerMap('mapName', Json);
+            var chart = echarts.init(document.getElementById('main'));
+            chart.setOption({
+                tooltip: {
+                    show: true,
+                    trigger: 'item',
+                    formatter: '{b}:{c}户',
+                    backgroundColor: 'rgb(0,0,0,0.5)',
+                    textStyle: {
+                        color: 'white',
+                        fontSize: 15,
+                    }
+                },
+                dataRange: {
+                    left: '0',
+                    bottom: '0',
+                    splitList: [{
+                        start: 300,
+                        label: '客户数大于300',
+                        color: 'rgb(233,182,55)'
+                    },
+                    {
+                        start: 101,
+                        end: 200,
+                        label: '客户数100 ~ 200',
+                        color: 'rgb(73,207,242)'
+                    },
+                    {
+                        start: 1,
+                        end: 100,
+                        label: '客户数1 ~ 100',
+                        color: 'rgb(141,214,19)'
+                    },
+                    {
+                        start: 0,
+                        end: 0,
+                        label: '客户数为0',
+                        color: 'rgb(225,225,225)'
+                    }
+                    ],
+                    color: ['rgb(225,225,225)', 'rgb(141,214,19)', 'rgb(73,207,242)', 'rgb(233,182,55)'],
+                    textStyle: {
+                        fontSize: 15,
+                    }
+                },
+                series: [{
+                    name: '数据名称',
+                    type: 'map',
+                    roam: false,
+                    mapType: 'mapName',
+                    selectedMode: 'single',
+                    showLegendSymbol: false,
+                    itemStyle: {
+                        normal: {
+                            color: '#ccc',
+                            borderWidth: 0.5,
+                            label: {
+                                show: true,
+                                textStyle: {
+                                    color: '#666'
+                                }
+                            }
+                        }
+                    },
+                    data: [
+                        {
+                            name: '乐从镇',
+                            value: 101,
+                        },
+                        {
+                            name: '大良街道',
+                            value: 800,
+                        },
+                        {
+                            name: '伦教街道',
+                            value: 500,
+                        }
+                    ]
+                }],
+            });
+            chart.on('click', function (params) {
+                if(params.name === '广东省') loadMap('广东省')
+                if(params.name === '佛山市') loadMap('佛山市')
+                if(params.name === '顺德区') loadMap('顺德区')
+                if(params.name === '伦教街道') loadMap('伦教街道')
+            });
+        });
+    }
+</script>
+
+</html>
